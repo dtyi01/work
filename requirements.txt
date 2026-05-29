@@ -1,0 +1,57 @@
+# Qwen-1.8B-Chat 模型离线运行依赖文件
+# 适用于完全离线环境的 Python 包版本约束
+
+# 核心深度学习框架 (PyTorch with CUDA 11.8)
+# 注意：如需在纯CPU环境运行，请将 `+cu118` 替换为 `+cpu`
+torch==2.1.0+cu118
+torchvision==0.16.0+cu118
+torchaudio==2.1.0+cu118
+
+# Hugging Face 生态核心库
+# transformers: 提供模型加载、分词器和推理接口，必须 >=4.32.0 以支持 Qwen 系列模型结构
+transformers>=4.32.0
+
+# 加速库，支持 device_map="auto" 自动设备分配与分布式推理优化
+accelerate>=0.21.0
+
+# 分词与工具库
+# tiktoken: OpenAI 分词器依赖，部分Qwen实现中用于token计数
+tiktoken>=0.5.2
+
+# einops: 张量操作工具库，常用于注意力机制重构
+einops
+
+# 科学计算基础库
+scipy>=1.12.0
+
+# 流式生成支持库，实现逐token输出（类似打字机效果）
+transformers_stream_generator==0.0.4
+
+# SentencePiece 分词后端支持，Qwen模型所必需
+sentencepiece
+
+# 参数高效微调库，用于LoRA等轻量化训练/推理场景
+# 版本限制 <0.8.0 以避免API变更导致的兼容性问题
+peft<0.8.0
+
+# 可选依赖：深度优化与量化支持
+# deepspeed: 微软深度学习优化库，可用于模型并行与内存优化（可选）
+deepspeed
+
+# auto-gptq: GPTQ量化模型加载支持，用于低显存设备部署（可选）
+auto-gptq
+
+# optimum: Hugging Face 优化库，与auto-gptq协同工作，支持多种量化格式（可选）
+optimum
+
+# 安装说明：
+# 1. 推荐使用虚拟环境（venv 或 conda）进行隔离安装
+# 2. 在联网环境下执行：pip download -r requirements.txt -d ./packages/
+# 3. 将 ./packages/ 目录复制到离线设备
+# 4. 在离线设备上执行：pip install --no-index --find-links=./packages/ -r requirements.txt
+# 5. 首次运行模型时会自动下载至本地缓存（~/.cache/huggingface/hub），后续可完全离线加载
+
+# 兼容性提示：
+# - 所有版本均基于搜索结果中的实测稳定组合（来源：[H5M_45], [H5M_47]）
+# - 若使用CPU专用版本，请确保torch、torchvision、torchaudio均使用 `+cpu` 后缀
+# - 必须设置 trust_remote_code=True 以正确加载Qwen模型自定义代码
